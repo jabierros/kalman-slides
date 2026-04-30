@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Excalidraw Interactive Presentation</title>
+    <link rel="stylesheet" href="publish.css">
+    <style>
+        /* This makes it full screen with a light background */
+        body { 
+            margin: 0; 
+            padding: 0; 
+            background-color: #ffffff; 
+            height: 100vh; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            overflow: hidden; 
+        }
+        .markdown-preview-view, .internal-embed {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        /* Forces the starting SVG to be larger */
+        svg.excalidraw-svg {
+            width: 95vw !important;
+            height: 95vh !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="markdown-preview-view">
+        <div class="internal-embed">
+            <!-- Notice we added id="slide-image" here -->
+            <img id="slide-image" src="Excalidraw/Gaussian Information Aggregation Theorem.excalidraw.svg" alt="Presentation.svg">
+        </div>
+    </div>
+
+    <!-- This script catches the links from other slides -->
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const fileParam = urlParams.get('file');
+        // If a file is requested in the URL, swap the image BEFORE publish.js runs
+        if (fileParam) {
+            document.getElementById('slide-image').src = decodeURIComponent(fileParam);
+        }
+    </script>
+    
+    <script src="publish.js"></script>
+</body>
+</html>
