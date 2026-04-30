@@ -16,7 +16,7 @@ if(window.self !== window.top) {
   });
 }
 
-const baseUrl = `${window.location.origin}/`;
+const baseUrl = window.location.origin + window.location.pathname.replace(/\/[^\/]*$/, '/');
 
 const [isDesktop, isMobile, isTablet] = (()=>{
   const userAgent = navigator.userAgent;
