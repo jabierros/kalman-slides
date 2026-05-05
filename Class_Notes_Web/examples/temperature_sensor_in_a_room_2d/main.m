@@ -1,0 +1,99 @@
+clear all
+
+inject_MATLAB_preamble;
+
+global t sigma_T__meas T_min T_max
+sigma_T__meas=4;
+T_min=18; T_max=38;
+
+global z__tr_func
+z__tr_func=@(t) T__tr_func(t,T_min,T_max);
+
+% mu_x_0 is the initial state estimation
+T_0=(50-(-5))/2 %ºC
+dT_0=0 %ºC/s
+mu_x_0=[T_0;0];
+
+% sigma_x_0 is the STD of the initial state estimation
+
+% $ \dot{T}^{max}=\frac{20}{3600} ^\circ\text{C/s}$
+% $\omega=\frac{2\pi}{24*3600} \text{ rad/s}$
+% $\ddot{T}^{max}=\omega  \dot{T}^{max}$
+
+sigma_T_0=50-T_0; %ºC
+sigma_dT_0=20/3600 %ºC/s
+sigma_x_0=[sigma_T_0; sigma_dT_0]
+sigma2_x_0=diag(sigma_x_0.^2)
+omega=2*pi/(24*3600)
+Delta_T=50-T_0
+Delta_t=1 %s
+sigma_w_1= 1/2 * 1/sqrt(2) * Delta_T*omega^2 * Delta_t^2 %ºC 1/2 
+sigma_w_2=       1/sqrt(2) * Delta_T*omega^2 * Delta_t       %ºC/s
+sigma_w=[sigma_w_1;sigma_w_2]
+sigma2_w=diag(sigma_w.^2)
+sigma_z__meas=[sigma_T__meas] %ºC
+sigma2_z__meas=sigma_z__meas^2;
+sigma_v=0;
+sigma2_v=sigma_v^2 %ºC^2
+fid=fopen('sol.dat','w');
+mu_x=mu_x_0;
+sigma2_x=sigma2_x_0; %K^2
+t_series=(0:24*3600);
+t=t_series(1);
+z__meas=get_z();
+f_x=[1,Delta_t;
+     0,1];
+h_x=[1,0];
+fprintf(fid,'%d %d %d %d %d %d %d\n',t,mu_x,diag(sigma2_x),z__meas,z__tr_func(t));
+for k=1:length(t_series)-1
+% Prediction: state @ k+1 using process model
+mu_x_pred=f_x*mu_x;
+sigma2_x_pred=f_x*sigma2_x*f_x'+sigma2_w;
+I_x_pred=inv(sigma2_x_pred);
+% Observation: state @ using sensor equation
+t=t_series(k+1);
+z__meas=get_z();
+h_x_mu_x_obs=z__meas;
+sigma2_x_obs=sigma2_z__meas + sigma2_v;
+I_x_obs=inv(sigma2_x_obs);
+% Correction: state @ k+1 using ML fusion of estimations
+I_total=I_x_pred+I_x_obs;
+mu_x=inv(I_total)*(I_x_pred*mu_x_pred+I_x_obs*pinv(h_x)*h_x_mu_x_obs);
+sigma2_x=inv(I_total);
+fprintf(fid,'%d %d %d %d %d %d %d\n',t,mu_x,diag(sigma2_x),z__meas,z__tr_func(t));
+end
+fclose(fid)
+
+load -ascii sol.dat ;
+t_series=sol(:,1);
+mu_x_series=sol(:,2:3);
+sigma2_x_series=sol(:,4:5);
+sigma_x_series=sqrt(sigma2_x_series);
+sigma_z_series=ones(length(sigma_x_series),1)*sigma_z__meas;
+z__meas_series=sol(:,6);
+z__tr_series=sol(:,7);
+t_series=sol(:,1);
+fig = figure('visible','on');
+plot(t_series,z__meas_series,t_series,mu_x_series(:,1),t_series,mu_x_series(:,2),t_series,z__tr_series)
+title_handle = title("$z^{meas}$ vs $\mu_x$ vs $z^{tr}$");
+legend_('$z^{meas}$','$\mu_x(1)$','$\mu_x(2)$','$z^{t}$')
+xlabel('$t$');
+ylabel('$[^oC]$');
+print(fig, 'plot1.png', '-dpng')
+print(fig, 'plot1.pdf', '-dpdf')
+fig = figure('visible','on');
+plot(t_series,sigma_x_series(:,1),t_series,sigma_x_series(:,2),t_series,sigma_z_series)
+title_handle = title("$\sigma_x$ vs $\sigma_{\mu_x}$");
+legend_('$\sigma_x(1)$','$\sigma_x(2)$','$\sigma_{z}$')
+xlabel('$t$');
+ylabel('$[^oC]$');
+print(fig, 'plot2.png', '-dpng')
+print(fig, 'plot2.pdf', '-dpdf')
+fig = figure('visible','off');
+plot(t_series,z__tr_series)
+title_handle = title("$T^{tr}$");
+legend_('$T^{tr}$')
+xlabel('$t$');
+ylabel('$[^oC]$');
+print(fig, 'plot.png', '-dpng')
+print(fig, 'plot.pdf', '-dpdf')
