@@ -1,0 +1,14 @@
+# Header Description:
+#
+# Version: v3.0.0.1
+# Platform: Android (Brand: Redmi, Device: cannong, Model: M2007J22G, SDK: 31)
+# Model: M2007J22G
+# File: GNSS_RAW_20260526_132950.txt
+#
+# Raw,ElapsedRealtimeMillis,TimeNanos,LeapSecond,TimeUncertaintyNanos,FullBiasNanos,BiasNanos,BiasUncertaintyNanos,DriftNanos,DriftUncertaintyNanos,HardwareClockDiscontinuityCount,Svid,TimeOffsetNanos,State,ReceivedSvTimeNanos,ReceivedSvTimeUncertaintyNanos,Cn0DbHz,PseudorangeRateMetersPerSecond,PseudorangeRateUncertaintyMetersPerSecond,AccumulatedDeltaRangeState,AccumulatedDeltaRangeMeters,AccumulatedDeltaRangeUncertaintyMeters,CarrierFrequencyHz,CarrierCycles,CarrierPhase,CarrierPhaseUncertainty,MultipathIndicator,SnrInDb,ConstellationType,AgcDb,BasebandCn0DbHz
+#
+# Fix,Provider,Latitude,Longitude,Altitude,Speed,Accuracy,Bearing,UnixTimeMillis,SpeedAccuracyMetersPerSecond,BearingAccuracyDegrees,elapsedRealtimeNanos,VerticalAccuracyMeters
+#
+Raw,315902085,546960000000,18,,,,,,,0,2,0.000000000000000,47,214208407012599,487,20.59500,-138.46583,0.14999,16,0.00000,0.00000,1.57542E9,,,0,0.0,1,6.0
+Raw,315902085,546960000000,18,,,,,,,0,1,0.000000000000000,47,214208405217921,316,25.81600,-467.20024,0.14999,16,0.00000,0.00000,1.57542E9,,,0,6.138243557798713,1,6.0
+Raw,315902631,547460000000,18,,,,,,,0,2,0.000000000000000,47,214208907012884,396,23.38600,-138.07762,0.14999,16,0.00000,0.00000,1.57542E9,,,0,2.6939714779491237,1,6.0
